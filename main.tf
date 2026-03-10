@@ -103,7 +103,7 @@ resource "aws_route_table" "database" {
 resource "aws_route" "public" {
   route_table_id            = aws_route_table.public.id
   destination_cidr_block    = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.main.id
+  gateway_id = aws_internet_gateway.gw.id
 }
 
 resource "aws_eip" "nat" {
@@ -134,7 +134,7 @@ resource "aws_nat_gateway" "main" {
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
   # on the Internet Gateway for the VPC.
-  depends_on = [aws_internet_gateway.main]
+  depends_on = [aws_internet_gateway.gw]
 }
 resource "aws_route" "private" {
   route_table_id            = aws_route_table.private
