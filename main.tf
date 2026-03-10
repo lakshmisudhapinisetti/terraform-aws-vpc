@@ -107,7 +107,7 @@ resource "aws_route" "public" {
 }
 
 resource "aws_eip" "nat" {
-  instance = aws_instance.main.id
+
   domain   = "vpc"
   tags = merge(
         local.common_tags,
