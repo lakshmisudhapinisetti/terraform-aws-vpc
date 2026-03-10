@@ -11,7 +11,7 @@ resource "aws_internet_gateway" "gw" {
 
   tags = local.igw_final_tags
 }
-
+#public subnets
 resource "aws_subnet" "public" {
     count = length(var.public_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
@@ -28,7 +28,7 @@ resource "aws_subnet" "public" {
         var.public_subnet_tags
     )
     }
-
+#private subnets
 resource "aws_subnet" "private" {
     count = length(var.private_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
@@ -44,7 +44,7 @@ resource "aws_subnet" "private" {
         var.private_subnet_tags
     )
     }
-
+#database subnets
     resource "aws_subnet" "database" {
     count = length(var.database_subnet_cidrs)
   vpc_id     = aws_vpc.main.id
@@ -61,3 +61,41 @@ resource "aws_subnet" "private" {
         var.database_subnet_tags
     )
     }
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.public.id
+
+  tags = merge(
+        local.common_tags,
+       # roboshop-dev-public
+        {
+            Name = "${var.project}-${var.environment}-public"
+        },
+        var.public_route_table_tags
+    )
+}
+
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.private.id
+
+  tags = merge(
+        local.common_tags,
+       # roboshop-dev-private
+        {
+            Name = "${var.project}-${var.environment}-private"
+        },
+        var.private_route_table_tags
+    )
+}
+resource "aws_route_table" "database" {
+  vpc_id = aws_vpc.database.id
+
+  tags = merge(
+        local.common_tags,
+       # roboshop-dev-database
+        {
+            Name = "${var.project}-${var.environment}-database"
+        },
+        var.database_route_table_tags
+    )
+}
